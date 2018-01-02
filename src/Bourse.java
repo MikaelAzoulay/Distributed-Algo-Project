@@ -32,7 +32,7 @@ public class Bourse {
 	            bourse = new Bourse(4020);
 
 		se =  new ServerSocket(bourse.port);
-		System.out.println ("la bourse est connectee et ecoute sur le port n° " + bourse.port);
+		System.out.println ("la bourse est connectee et ecoute sur le port num " + bourse.port);
         System.out.println ("en attente d'une connexion d'un courtier");
 
 
@@ -41,10 +41,10 @@ public class Bourse {
 
 
 			ssv = se.accept(); //le courtier se connecte
-			System.out.println ("courtier connecté a la bourse");
+			System.out.println ("courtier connectï¿½ a la bourse");
 			ThreadBourseCourtier reponse = new ThreadBourseCourtier (ssv, bourse);
             reponse.start();
-            
+
 			}
 		}
 		catch (IOException e){

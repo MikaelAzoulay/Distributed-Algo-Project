@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ServeurCourtier extends Thread{
-	
+
 
 	private int port;
 	Courtier courtier;
@@ -28,7 +28,7 @@ public class ServeurCourtier extends Thread{
 		try{
 
 		se =  new ServerSocket(this.port);
-		System.out.println ("la courtier est connecte et ecoute sur le port n° " + this.port);
+		System.out.println ("la courtier est connecte et ecoute sur le port num " + this.port);
         System.out.println ("en attente d'une connexion d'un client");
 
 
@@ -37,12 +37,12 @@ public class ServeurCourtier extends Thread{
 
 
 			ssv = se.accept(); //le courtier se connecte
-			System.out.println ("client connecté au courtier");
+			System.out.println ("client connectÃ© au courtier");
 			ThreadCourtierClient reponse = new ThreadCourtierClient(ssv, this.courtier);
             reponse.start();
             //System.out.println("inscription valide");
             //System.out.println(bourse.connexion.toString());
-            
+
 			}
 		}
 		catch (IOException e){

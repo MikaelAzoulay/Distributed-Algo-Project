@@ -7,9 +7,9 @@ import java.util.Scanner;
 
 public class Courtier{
 
- 
-    private int nomCourtier;
-    private HashMap<Integer,String> listeClient;// faire hashmap (nom,etat)
+
+  private int nomCourtier;
+  private HashMap<Integer,String> listeClient;// faire hashmap (nom,etat)
 	private HashMap<Integer, Commande> listeAttenteCommande;
 	private ArrayList<Societe> societes ;
 	private double tauxCommission;
@@ -20,20 +20,20 @@ public class Courtier{
 	private String etat;
 
 
-	
+
 	public Courtier() {
 		listeClient = new HashMap<Integer,String>();
 	    listeAttenteCommande= new HashMap<Integer,Commande>();
 	}
-	
+
 	public Courtier(int nomCourtier) {
 		this.nomCourtier = nomCourtier;
 		listeClient = new HashMap<Integer,String>();
 		listeAttenteCommande= new HashMap<Integer,Commande>();
 	}
-	
-	
-	
+
+
+
 	public int getNomCourtier() {
 		return nomCourtier;
 	}
@@ -98,121 +98,8 @@ public class Courtier{
 		this.hote = hote;
 	}
 
-	public Socket getSc() {
-		return sc;
-	}
 
-	public void setSc(Socket sc) {
-		this.sc = sc;
-	}
-
-	public void Actualisation_connexion() throws IOException {
-		BufferedReader in;
-		PrintWriter out;
-		in = new BufferedReader(new InputStreamReader(sc.getInputStream()));
-		out = new PrintWriter(sc.getOutputStream(),true);
-		out.println("nouveau client inscrit");
-		out.println(nomCourtier);
-		
-	}
-	public void EnvoyerCommandeBourse(Commande com) throws IOException {
-//		BufferedReader in;
-//		PrintWriter out;
-//		in = new BufferedReader(new InputStreamReader(sc.getInputStream()));
-//		out = new PrintWriter(sc.getOutputStream(),true);
-//		out.println("nouveau client inscrit");
-//		out.println(nomCourtier);
-		
-	}
-	
-	public void ActualisationClients() {
-		
-		
-		
-	}
-	
-	
-	
-	
-	
-
-	public static void main (String[] args){
-
-
-	BufferedReader in;
-	PrintWriter out;
-	Scanner scan;
-	String rep;
-	Courtier courtier =new Courtier();
-
-	try{
-		if (args.length>=2){
-			courtier.hote= InetAddress.getByName(args[0]);
-			courtier.port=Integer.parseInt(args[1]);
-		}
-		else{
-			courtier.hote = InetAddress.getLocalHost();
-			courtier.port = 4020;
-		}
-	}
-	catch(UnknownHostException e){
-		System.err.println("Machine inconnue :" +e);
-	}
-	try{
-
-	System.out.println ("connexion a la bourse");
-	courtier.sc = new Socket(courtier.hote,courtier.port);
-	System.out.println ("le courtier est connecte a la bourse");
-
-	in = new BufferedReader(new InputStreamReader(courtier.sc.getInputStream()));
-	out = new PrintWriter(courtier.sc.getOutputStream(),true);
-	System.out.println ("taper 1 pour s'inscrire");
-    scan = new Scanner(System.in);
-    rep= scan.nextLine().trim();
-	out.println(rep);//envoi de la reponse a la bourse
-
-	String message=in.readLine();//recupere le message de la bourse
-	System.out.println (message);
-
-
-	scan = new Scanner(System.in);
-	String nom= scan.nextLine().trim();
-
-	out.println(nom);
-	courtier.nomCourtier = Integer.parseInt(nom);
-
-	String mess=in.readLine();
-	System.out.println (mess);
-
-	
-
-		if (mess.equals("inscription courtier terminee")){
-			System.out.println ("match");
-			ServeurCourtier serveurCourtier = new ServeurCourtier(4000,courtier);
-			serveurCourtier.start();
-		}
-		
-	
-
-
-
-
-
-
-
-	}
-	catch(IOException e){
-		System.err.println("Impossible de creer la socket du courtier : " +e);
-	}
-		/*finally{
-			try{
-				courtier.sc.close();
-			}
-			catch (IOException e){}
-		}*/
-	}
-
-	public String getEtat() {
+  public String getEtat() {
 		return etat;
 	}
 
@@ -220,5 +107,89 @@ public class Courtier{
 		this.etat = etat;
 	}
 
-	
+  //Méthode permettant d'informer la bourse que ce courtier a un nouveau client
+  public void Actualisation_connexion() throws IOException {
+		PrintWriter out = new PrintWriter(sc.getOutputStream(),true);
+		out.println("nouveau client inscrit");
+		out.println(nomCourtier);
+    out.flush();
+    out.close();
+	}
+
+  //Méthode permettant de transmettre une commande d'un client à la bourse
+	public void EnvoyerCommandeBourse(Commande com) throws IOException {
+		PrintWriter out = new PrintWriter(sc.getOutputStream(),true);;
+    ObjectOutputStream outObject = new ObjectOutputStream(sc.getOutputStream());
+		out.println("nouvelle commande");
+    outObject.writeObject(com);
+    out.flush();
+    out.close();
+    outObject.flush();
+    outObject.close();
+	}
+
+  //Méthode permettant d'informer la bourse qu'un des clients de ce courtier a fermé sa journée
+	public void ActualisationClients() throws IOException {
+    PrintWriter out = new PrintWriter(sc.getOutputStream(),true);;
+    out.println("rmClient");
+	}
+
+  // TO DO : Bien commenter le main !
+	public static void main (String[] args){
+  	BufferedReader in;
+  	PrintWriter out;
+  	Scanner scan;
+  	String rep;
+  	Courtier courtier =new Courtier();
+
+  	try{
+  		if (args.length>=2){
+  			courtier.hote= InetAddress.getByName(args[0]);
+  			courtier.port=Integer.parseInt(args[1]);
+  		}
+  		else{
+  			courtier.hote = InetAddress.getLocalHost();
+  			courtier.port = 4020;
+  		}
+  	}
+  	catch(UnknownHostException e){
+  		System.err.println("Machine inconnue :" +e);
+  	}
+
+  	try{
+    	System.out.println ("connexion a la bourse");
+    	courtier.sc = new Socket(courtier.hote,courtier.port);
+    	System.out.println ("le courtier est connecte a la bourse");
+
+    	in = new BufferedReader(new InputStreamReader(courtier.sc.getInputStream()));
+    	out = new PrintWriter(courtier.sc.getOutputStream(),true);
+    	System.out.println ("taper 1 pour s'inscrire");
+        scan = new Scanner(System.in);
+        rep= scan.nextLine().trim();
+    	out.println(rep);//envoi de la reponse a la bourse
+
+    	String message=in.readLine();//recupere le message de la bourse
+    	System.out.println (message);
+
+
+    	scan = new Scanner(System.in);
+    	String nom= scan.nextLine().trim();
+
+    	out.println(nom);
+    	courtier.nomCourtier = Integer.parseInt(nom);
+
+    	String mess=in.readLine();
+    	System.out.println (mess);
+
+  		if (mess.equals("inscription courtier terminee")){
+  			System.out.println ("match");
+  			ServeurCourtier serveurCourtier = new ServeurCourtier(4000,courtier);
+  			serveurCourtier.start();
+  		}
+  	}
+  	catch(IOException e){
+  		System.err.println("Impossible de creer la socket du courtier : " +e);
+  	}
+	}
+
 }
