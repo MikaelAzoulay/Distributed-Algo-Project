@@ -116,12 +116,12 @@ public class Courtier{
 		
 	}
 	public void EnvoyerCommandeBourse(Commande com) throws IOException {
-		BufferedReader in;
-		PrintWriter out;
-		in = new BufferedReader(new InputStreamReader(sc.getInputStream()));
-		out = new PrintWriter(sc.getOutputStream(),true);
-		out.println("nouveau client inscrit");
-		out.println(nomCourtier);
+//		BufferedReader in;
+//		PrintWriter out;
+//		in = new BufferedReader(new InputStreamReader(sc.getInputStream()));
+//		out = new PrintWriter(sc.getOutputStream(),true);
+//		out.println("nouveau client inscrit");
+//		out.println(nomCourtier);
 		
 	}
 	
