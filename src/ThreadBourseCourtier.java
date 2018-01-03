@@ -2,6 +2,7 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.LinkedList;
+import java.util.Map;
 
 
 public class ThreadBourseCourtier extends Thread {
@@ -10,6 +11,9 @@ public class ThreadBourseCourtier extends Thread {
     PrintWriter out;
     BufferedReader in;
     Bourse bourse;
+    int nomCourtier;
+    ObjectOutputStream outObject;
+    ObjectInputStream inObject;
 
     ThreadBourseCourtier(Socket socket , Bourse bourse) {
         ssv = socket;
@@ -19,56 +23,108 @@ public class ThreadBourseCourtier extends Thread {
 
     @Override
     public void run() {
-    	
+    	while (true) {
         try {
-        	
             in = new BufferedReader(new InputStreamReader(ssv.getInputStream()));
             out = new PrintWriter(ssv.getOutputStream(), true);
-
+            outObject = new ObjectOutputStream(ssv.getOutputStream());
+            inObject = new ObjectInputStream(ssv.getInputStream());
+            
+            
 
             String rep=in.readLine();
+            
             System.out.println ("inscription du courtier en cours");
 
-			// si le courtier veut s'inscrire
-			if (rep.equals("1")) {
+			// si le courtier veut s'inscrire à la bourse
+			if (rep.equals("inscription")) {
 				
-				out.println("Envoyez moi votre nom");//envoi le message au courtier
-
+				String	str = "Envoyez moi votre nom ";
+				out.println(str);
 				String nom = in.readLine();
 				System.out.println("nom du courtier " + nom);
-				int nomCourtier = Integer.parseInt(nom);
-				bourse.connexion.put(nomCourtier, 0);
-	            out.println("inscription courtier terminee");
-	            System.out.println(bourse.connexion.toString());
-	            
-	            for (int i=0;i<2;i++) {
-	            String message = in.readLine();
-	            if (message.equals("nouveau client inscrit")) {
-	            	String nomCourtierAActualiser =in.readLine();
-					System.out.println("le courtier " + nomCourtierAActualiser +" possede un nouveau client");
-					int nc= Integer.parseInt(nomCourtierAActualiser);
-					int nbconnexioncourtier = bourse.connexion.get(nc);
-					int nouveaunb=nbconnexioncourtier+1;
-					bourse.connexion.put(nc, nouveaunb);
-					System.out.println(bourse.connexion.toString());
-	            }
-	            }
+				nomCourtier = Integer.parseInt(nom);
+				bourse.getConnexion().put(nomCourtier, 0);
+				//On vï¿½rifie si c'est une premiï¿½re inscription du courtier ou s'il revient NECESSAIRE ???
+				/*for (Map.Entry<Integer, Integer> c : bourse.getConnexion().entrySet()) {
+					if (nomCourtier==c.getKey()) {
+						c.setValue(0);
+						out.println("Vous revoila !");
+						//marquer le courtier comme ouvert necessaire ???
+					}
+					else {
+						courtier.getListeClient().put(nomClient, "ouvert");
+					}
+				}*/
 
+				// Acquittement au courtier pour valider sa connexion
+				out.println("ack");
+				//Envoi de la l'Ã©tat actuel du marchÃ© au courtier
+				outObject.writeObject(bourse.getSocietes());
 
+		        out.println("inscription courtier terminee aupres de la bourse :");
+		        //TEST : Affiche la liste des clients du courtier
+		        System.out.println("AFFICHAGE DES COURTIERS ET DU NB DE CLIENTS");
+		        System.out.println(bourse.getConnexion().toString());
+		        System.out.println();
+			}
+				
+		
 
+           
+			//le courtier notifie la bourse qu'il possede un nv client
+			else if (rep.equals("nvClient")) {
+				System.out.println("le courtier " + nomCourtier +" possede un nouveau client");
+				int nbconnexioncourtier = bourse.getConnexion().get(nomCourtier);
+				bourse.getConnexion().put(nomCourtier, nbconnexioncourtier+1);
+				System.out.println(bourse.getConnexion().toString());
+            }
+			//le courtier notifie la bourse qu'un de ses clients s'est déconnecté
+			else if (rep.equals("rmClient")) {
+				System.out.println("Un client du courtier " + nomCourtier +" a ferme sa journee");
+				int nbconnexioncourtier = bourse.getConnexion().get(nomCourtier);
+				bourse.getConnexion().put(nomCourtier, nbconnexioncourtier-1);
+				System.out.println(bourse.getConnexion().toString());
+				
+				//verification si c'était le dernier client à se deconnecter et que tpus les courtiers sont egalement deconnecte alors on ferme la bourse
+				if (bourse.getConnexion().get(nomCourtier)==0) {
+					boolean ledernier=true;
+					for (Map.Entry<Integer, Integer> c : bourse.getConnexion().entrySet()) {
+						if (c.getValue()!=0) {
+							ledernier = false;
+							break;
+						}
+						
+					}
+					if (ledernier) bourse.setEtat("ferme");
+				}
+			}
+			//le courtier envoie une commande client à la bourse
+			else if (rep.equals("commander")) {
+				Commande commande = (Commande)inObject.readObject();
+				for (Societe soc : bourse.getSocietes()) {
+					if (soc.getNomSociete().equals(commande.getNomSociete())){
+						soc.getCommandes().add(commande);
+					}
+				}
+				
+			}
+			
 
-             }
 
 
 
             in.close();
             out.close();
+            outObject.close();
+            inObject.close();
             ssv.close();
-        } catch (IOException e) {
+            
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
+    }
     // VÃ©rifier le client
     // si le client se reconnecte, ila le droit de vÃ©rifier son vote
 }

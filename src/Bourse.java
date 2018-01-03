@@ -7,12 +7,54 @@ public class Bourse {
 
 	private int port;
 	private ArrayList<Societe> societes ;
-	public HashMap<Integer, Integer> connexion;
+	private HashMap<Integer, Integer> connexion;
+	String etat;
+
+	public String getEtat() {
+		return etat;
+	}
+
+
+	public void setEtat(String etat) {
+		this.etat = etat;
+	}
+
+
+	public int getPort() {
+		return port;
+	}
+
+
+	public void setPort(int port) {
+		this.port = port;
+	}
+
+
+	public ArrayList<Societe> getSocietes() {
+		return societes;
+	}
+
+
+	public void setSocietes(ArrayList<Societe> societes) {
+		this.societes = societes;
+	}
+
+
+	public HashMap<Integer, Integer> getConnexion() {
+		return connexion;
+	}
+
+
+	public void setConnexion(HashMap<Integer, Integer> connexion) {
+		this.connexion = connexion;
+	}
+
 
 	public Bourse(int port) {
 		 this.port = port;
 		 this.connexion = new HashMap <Integer, Integer>();
 		 this.societes = new ArrayList<Societe>();
+		 this.etat = "ouvert";
 	}
 
 
