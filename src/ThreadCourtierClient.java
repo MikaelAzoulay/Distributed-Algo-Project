@@ -74,15 +74,15 @@ public class ThreadCourtierClient extends Thread{
     			 }
 
     				//Le client passe une commande à son courtier
-    			 else if( rep.equals("commander")) {
+    			 else if( rep.equals("achat")) {
     					Commande com = new Commande();
-    					out.println("voulez vous acheter ou vendre ? ");
-    					com.setChoix(in.readLine());
-    					out.println("Quelle societe ?");
+    					//out.println("voulez vous acheter ou vendre ? ");
+    					com.setChoix("0");
+    					//out.println("Quelle societe ?");
     					com.setNomSociete(in.readLine());
-    					out.println("A quel prix ?");
+    					//out.println("A quel prix ?");
     					com.setPrix((double)Integer.parseInt(in.readLine()));
-    					out.println("Combien d'actions ?");
+    					//out.println("Combien d'actions ?");
     					com.setNbActions(Integer.parseInt(in.readLine()));
     					com.setNomCourtier(courtier.getNomCourtier());
     					com.setNomClient(nomClient);
@@ -90,6 +90,23 @@ public class ThreadCourtierClient extends Thread{
     					System.out.println(courtier.getListeAttenteCommande().toString());
     					courtier.EnvoyerCommandeBourse(com);
        		 }
+  				 
+    			 else if( rep.equals("vente")) {
+ 					Commande com = new Commande();
+ 					//out.println("voulez vous acheter ou vendre ? ");
+ 					com.setChoix("1");
+ 					//out.println("Quelle societe ?");
+ 					com.setNomSociete(in.readLine());
+ 					//out.println("A quel prix ?");
+ 					com.setPrix((double)Integer.parseInt(in.readLine()));
+ 					//out.println("Combien d'actions ?");
+ 					com.setNbActions(Integer.parseInt(in.readLine()));
+ 					com.setNomCourtier(courtier.getNomCourtier());
+ 					com.setNomClient(nomClient);
+ 					courtier.getListeAttenteCommande().put(nomClient, com);
+ 					System.out.println(courtier.getListeAttenteCommande().toString());
+ 					courtier.EnvoyerCommandeBourse(com);
+    		 }
 
     				//Le client prévient son courtier qu'il ferme sa journée
     			 else if( rep.equals("fermer")) {

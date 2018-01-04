@@ -9,22 +9,79 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import javax.accessibility.AccessibleTableModelChange;
+
 public class Client {
 	
 	private int nomClient;
 	private int nomCourtier;
-	private HashMap<Societe, Integer> portfeuille;//liste de societe avec son nombre d'action que le client detient
+	private HashMap<String, Integer> portfeuille;//liste de societe avec son nombre d'action que le client detient
 	private double espece;
-	private ArrayList<Commande> listeCommande;
-	
-	
+	//private ArrayList<Commande> listeCommande;
+	private String etat;
+	private double especeAchatAttente;
+	private HashMap<String, Integer> venteAttente; //Nombre d'actions en attente d'être vendues pour chaque société
 	
 	public Client() {
-		listeCommande=new ArrayList<Commande>();
+		//listeCommande=new ArrayList<Commande>();
 		portfeuille = new HashMap<>();
+		venteAttente = new HashMap<>();
 		
 	}
 
+	
+	public void ordreAchat(Client client) {
+		String societe;
+		double prix;
+		int nbActions;
+		System.out.println("Société ?");
+		societe = scan.nextLine().trim();
+		System.out.println("Prix ?");
+		prix = (double)Integer.parseInt(scan.nextLine().trim());
+		System.out.println("Combien d'actions ?");
+		nbActions = Integer.parseInt(scan.nextLine().trim());
+		
+		//Vérifie que le client possède l'argent nécessaire
+		double nvValeur = client.espece - client.especeAchatAttente - (prix * nbActions) - (prix * nbActions)/10;
+		
+		if(nvValeur > 0) {
+			System.out.println("Ressources suffisantes, envoi de l'ordre d'achat au courtier...");
+			client.especeAchatAttente += (prix * nbActions) + (prix * nbActions)/10;
+			out.println(societe);
+			out.println(prix);
+			out.println(nbActions);
+		} else {
+			System.out.println("Ressources insuffisantes, ordre d'achat annulé.");
+		}
+		
+	}
+	
+	public void ordreVente(Client client) {
+		String societe;
+		double prix;
+		int nbActions;
+		System.out.println("Société ?");
+		societe = scan.nextLine().trim();
+		System.out.println("Prix ?");
+		prix = (double)Integer.parseInt(scan.nextLine().trim());
+		System.out.println("Combien d'actions ?");
+		nbActions = Integer.parseInt(scan.nextLine().trim());
+		
+		//Vérifie que le client possède les actions nécessaires
+		int ventePossible = client.portfeuille.get(societe)-client.venteAttente.get(societe)-nbActions;
+		
+		if (ventePossible > 0) {
+			System.out.println("Vente possible, envoi de l'ordre au courtier...");
+			client.venteAttente.put(societe, client.venteAttente.get(societe)+nbActions);
+			out.println(societe);
+			out.println(prix);
+			out.println(nbActions);
+		} else {
+			System.out.println("Pas assez d'actions pour la société concernée, annulation de l'ordre de vente.");
+		}
+		
+	}
+	
 	
 	
 	public static void main (String[] args){
@@ -62,9 +119,9 @@ public class Client {
 		System.out.println ("taper 1 pour s'inscrire");
 	    scan = new Scanner(System.in);
 	    rep= scan.nextLine().trim();
-		out.println(rep);//envoi de la reponse a la bourse
+		out.println(rep);//envoi de la reponse au courtier
 
-		String message=in.readLine();//recupere le message de la bourse
+		String message=in.readLine();//recupere le message du courtier
 		System.out.println (message);
 
 
@@ -82,10 +139,45 @@ public class Client {
 				String nomCourtier = in.readLine();
 				System.out.println(nomCourtier);
 				client.nomCourtier = Integer.parseInt(nomCourtier);
-
+				client.etat = "ouvert";
+				mess = "Début";
 			}
 			
-		
+		while(client.etat.equals("ouvert")){
+			if(mess.equals("Début")) {
+				System.out.println("Ordre ?");
+				scan = new Scanner(System.in);
+				rep= scan.nextLine().trim();
+				
+				if(rep.equals("achat"){
+					out.println(rep);
+					ordreAchat(client);
+				} else if(rep.equals("vente")) {
+					out.println(rep));
+					ordreVente(client);
+				} else if(rep.equals("marche")) {
+					out.println(rep);
+					System.out.println(in.readLine());
+				} else if(rep.equals("fermer")) {
+					outprintln(rep);
+					client.etat = "ferme";
+				}
+				
+			} else if(mess.equals("Achat effectué")) {
+				Commande commande = new Commande();
+				commande = in.readObject();
+				
+				client.portfeuille.put(commande.getNomSociete(), client.portfeuille.get(commande.getNomSociete())+commande.getNbActions());
+				espece = espece - commande.getPrix()*commande.getNbActions() - (commande.getPrix()*commande.getNbActions())/10;				
+			
+			} else if(mess.equals("Vente effecutée")) {
+				Commande commande = new Commande();
+				commande = in.readObject();
+				
+				client.portfeuille.put(commande.getNomSociete(), client.portfeuille.get(commande.getNomSociete())-commande.getNbActions());
+				espece += commande.getPrix()*commande.getNbActions() - (commande.getPrix()*commande.getNbActions())/10;	
+			}
+		}
 
 
 
