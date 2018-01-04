@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInput;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -8,6 +9,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.io.ObjectInputStream;
 
 import javax.accessibility.AccessibleTableModelChange;
 
@@ -30,10 +32,11 @@ public class Client {
 	}
 
 	
-	public void ordreAchat(Client client) {
+	public static void ordreAchat(Client client, BufferedReader in, PrintWriter out) {
 		String societe;
 		double prix;
 		int nbActions;
+		Scanner scan = new Scanner(System.in);
 		System.out.println("Société ?");
 		societe = scan.nextLine().trim();
 		System.out.println("Prix ?");
@@ -56,10 +59,11 @@ public class Client {
 		
 	}
 	
-	public void ordreVente(Client client) {
+	public static void ordreVente(Client client, BufferedReader in, PrintWriter out) {
 		String societe;
 		double prix;
 		int nbActions;
+		Scanner scan = new Scanner(System.in);
 		System.out.println("Société ?");
 		societe = scan.nextLine().trim();
 		System.out.println("Prix ?");
@@ -149,17 +153,17 @@ public class Client {
 				scan = new Scanner(System.in);
 				rep= scan.nextLine().trim();
 				
-				if(rep.equals("achat"){
+				if(rep.equals("achat")){
 					out.println(rep);
-					ordreAchat(client);
+					ordreAchat(client, in, out);
 				} else if(rep.equals("vente")) {
-					out.println(rep));
-					ordreVente(client);
+					out.println(rep);
+					ordreVente(client, in, out);
 				} else if(rep.equals("marche")) {
 					out.println(rep);
 					System.out.println(in.readLine());
 				} else if(rep.equals("fermer")) {
-					outprintln(rep);
+					out.println(rep);
 					client.etat = "ferme";
 				}
 				
@@ -168,14 +172,14 @@ public class Client {
 				commande = in.readObject();
 				
 				client.portfeuille.put(commande.getNomSociete(), client.portfeuille.get(commande.getNomSociete())+commande.getNbActions());
-				espece = espece - commande.getPrix()*commande.getNbActions() - (commande.getPrix()*commande.getNbActions())/10;				
+				client.espece = client.espece - commande.getPrix()*commande.getNbActions() - (commande.getPrix()*commande.getNbActions())/10;				
 			
 			} else if(mess.equals("Vente effecutée")) {
 				Commande commande = new Commande();
 				commande = in.readObject();
 				
 				client.portfeuille.put(commande.getNomSociete(), client.portfeuille.get(commande.getNomSociete())-commande.getNbActions());
-				espece += commande.getPrix()*commande.getNbActions() - (commande.getPrix()*commande.getNbActions())/10;	
+				client.espece += commande.getPrix()*commande.getNbActions() - (commande.getPrix()*commande.getNbActions())/10;	
 			}
 		}
 
