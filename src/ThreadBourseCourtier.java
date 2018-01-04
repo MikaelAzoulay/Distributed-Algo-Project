@@ -29,16 +29,16 @@ public class ThreadBourseCourtier extends Thread {
             out = new PrintWriter(ssv.getOutputStream(), true);
             outObject = new ObjectOutputStream(ssv.getOutputStream());
             inObject = new ObjectInputStream(ssv.getInputStream());
-            
-            
+
+
 
             String rep=in.readLine();
-            
+
             System.out.println ("inscription du courtier en cours");
 
-			// si le courtier veut s'inscrire à la bourse
+			// si le courtier veut s'inscrire ï¿½ la bourse
 			if (rep.equals("inscription")) {
-				
+
 				String	str = "Envoyez moi votre nom ";
 				out.println(str);
 				String nom = in.readLine();
@@ -68,10 +68,10 @@ public class ThreadBourseCourtier extends Thread {
 		        System.out.println(bourse.getConnexion().toString());
 		        System.out.println();
 			}
-				
-		
 
-           
+
+
+
 			//le courtier notifie la bourse qu'il possede un nv client
 			else if (rep.equals("nvClient")) {
 				System.out.println("le courtier " + nomCourtier +" possede un nouveau client");
@@ -79,14 +79,14 @@ public class ThreadBourseCourtier extends Thread {
 				bourse.getConnexion().put(nomCourtier, nbconnexioncourtier+1);
 				System.out.println(bourse.getConnexion().toString());
             }
-			//le courtier notifie la bourse qu'un de ses clients s'est déconnecté
+			//le courtier notifie la bourse qu'un de ses clients s'est dÃ©connectÃ©
 			else if (rep.equals("rmClient")) {
 				System.out.println("Un client du courtier " + nomCourtier +" a ferme sa journee");
 				int nbconnexioncourtier = bourse.getConnexion().get(nomCourtier);
 				bourse.getConnexion().put(nomCourtier, nbconnexioncourtier-1);
 				System.out.println(bourse.getConnexion().toString());
-				
-				//verification si c'était le dernier client à se deconnecter et que tpus les courtiers sont egalement deconnecte alors on ferme la bourse
+
+				//verification si c'ï¿½tait le dernier client ï¿½ se deconnecter et que tpus les courtiers sont egalement deconnecte alors on ferme la bourse
 				if (bourse.getConnexion().get(nomCourtier)==0) {
 					boolean ledernier=true;
 					for (Map.Entry<Integer, Integer> c : bourse.getConnexion().entrySet()) {
@@ -94,12 +94,12 @@ public class ThreadBourseCourtier extends Thread {
 							ledernier = false;
 							break;
 						}
-						
+
 					}
 					if (ledernier) bourse.setEtat("ferme");
 				}
 			}
-			//le courtier envoie une commande client à la bourse
+			//le courtier envoie une commande client ï¿½ la bourse
 			else if (rep.equals("commander")) {
 				Commande commande = (Commande)inObject.readObject();
 				for (Societe soc : bourse.getSocietes()) {
@@ -107,9 +107,9 @@ public class ThreadBourseCourtier extends Thread {
 						soc.getCommandes().add(commande);
 					}
 				}
-				
+
 			}
-			
+
 
 
 
@@ -119,7 +119,7 @@ public class ThreadBourseCourtier extends Thread {
             outObject.close();
             inObject.close();
             ssv.close();
-            
+
         } catch (Exception e) {
             e.printStackTrace();
         }
