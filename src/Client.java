@@ -31,13 +31,21 @@ public class Client {
 
 	}
 
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> ef9c8c4e01037647c156ecc9b891df556a79701e
 	public static void ordreAchat(Client client, BufferedReader in, PrintWriter out) {
 		String societe;
 		double prix;
 		int nbActions;
 		Scanner scan = new Scanner(System.in);
+<<<<<<< HEAD
 		System.out.println("SociÃ©tÃ© ?");
+=======
+		System.out.println("Société ?");
+>>>>>>> ef9c8c4e01037647c156ecc9b891df556a79701e
 		societe = scan.nextLine().trim();
 		System.out.println("Prix ?");
 		prix = (double)Integer.parseInt(scan.nextLine().trim());
@@ -58,13 +66,21 @@ public class Client {
 		}
 
 	}
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> ef9c8c4e01037647c156ecc9b891df556a79701e
 	public static void ordreVente(Client client, BufferedReader in, PrintWriter out) {
 		String societe;
 		double prix;
 		int nbActions;
 		Scanner scan = new Scanner(System.in);
+<<<<<<< HEAD
 		System.out.println("SociÃ©tÃ© ?");
+=======
+		System.out.println("Société ?");
+>>>>>>> ef9c8c4e01037647c156ecc9b891df556a79701e
 		societe = scan.nextLine().trim();
 		System.out.println("Prix ?");
 		prix = (double)Integer.parseInt(scan.nextLine().trim());
@@ -152,7 +168,11 @@ public class Client {
 				System.out.println("Ordre ?");
 				scan = new Scanner(System.in);
 				rep= scan.nextLine().trim();
+<<<<<<< HEAD
 
+=======
+				
+>>>>>>> ef9c8c4e01037647c156ecc9b891df556a79701e
 				if(rep.equals("achat")){
 					out.println(rep);
 					ordreAchat(client, in, out);
@@ -172,14 +192,24 @@ public class Client {
 				commande = in.readObject();
 
 				client.portfeuille.put(commande.getNomSociete(), client.portfeuille.get(commande.getNomSociete())+commande.getNbActions());
+<<<<<<< HEAD
 				client.espece = client.espece - commande.getPrix()*commande.getNbActions() - (commande.getPrix()*commande.getNbActions())/10;
 
 			} else if(mess.equals("Vente effecutÃ©e")) {
+=======
+				client.espece = client.espece - commande.getPrix()*commande.getNbActions() - (commande.getPrix()*commande.getNbActions())/10;				
+			
+			} else if(mess.equals("Vente effecutée")) {
+>>>>>>> ef9c8c4e01037647c156ecc9b891df556a79701e
 				Commande commande = new Commande();
 				commande = in.readObject();
 
 				client.portfeuille.put(commande.getNomSociete(), client.portfeuille.get(commande.getNomSociete())-commande.getNbActions());
+<<<<<<< HEAD
 				client.espece += commande.getPrix()*commande.getNbActions() - (commande.getPrix()*commande.getNbActions())/10;
+=======
+				client.espece += commande.getPrix()*commande.getNbActions() - (commande.getPrix()*commande.getNbActions())/10;	
+>>>>>>> ef9c8c4e01037647c156ecc9b891df556a79701e
 			}
 		}
 
